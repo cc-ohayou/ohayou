@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ohayou-core/ohayou-core.iml" filepath="$PROJECT_DIR$/ohayou-core/ohayou-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ohayou-facade/ohayou-facade.iml" filepath="$PROJECT_DIR$/ohayou-facade/ohayou-facade.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ohayou-parent.iml" filepath="$PROJECT_DIR$/ohayou-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ohayou-web/ohayou-web.iml" filepath="$PROJECT_DIR$/ohayou-web/ohayou-web.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- ============================== -->
+    <!-- 根 pom 基本属性 -->
+    <!-- ============================== -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cc.ccspace</groupId>
+    <artifactId>ohayou-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>ohayou-parent</name>
+    <url>http://maven.apache.org</url>
+
+    <!-- ============================== -->
+    <!-- 下属子模块 -->
+    <!-- ============================== -->
+    <modules>
+        <module>ohayou-core</module>
+        <module>ohayou-facade</module>
+        <module>ohayou-web</module>
+    </modules>
+    <repositories>
+
+        <!-- ============================== -->
+        <!-- 个推repositories -->
+        <!-- ============================== -->
+        <repository>
+            <id>getui-nexus</id>
+            <url>http://mvn.gt.igexin.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+    <!-- ============================== -->
+    <!-- 各个jar依赖管理 -->
+    <!-- ============================== -->
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- ============================== -->
+            <!-- 工程内依赖 -->
+            <!-- ============================== -->
+            <dependency>
+                <groupId>com.cc.ccspace</groupId>
+                <artifactId>ohayou-facade</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cc.ccspace</groupId>
+                <artifactId>ohayou-core</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cc.ccspace</groupId>
+                <artifactId>ohayou-web</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+
+            <!-- =================================================== -->
+            <!-- 工程通用依赖（javax、junit、fastjson、apache、redis） -->
+            <!-- =================================================== -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.38</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>2.9.0</version>
+            </dependency>
+
+            <!-- ============================== -->
+            <!-- dubbo相关配置 -->
+            <!-- ============================== -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>2.8.4</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>curator-framework</artifactId>
+                        <groupId>org.apache.curator</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>curator-client</artifactId>
+                        <groupId>org.apache.curator</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>spring-web</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>spring-beans</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>spring-core</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>spring-aop</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>spring-expression</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.101tec</groupId>
+                <artifactId>zkclient</artifactId>
+                <version>0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>3.3.6</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.15.0-GA</version>
+            </dependency>
+            <!-- dubbo start -->
+
+
+            <!-- ============================== -->
+            <!-- spring相关配置 -->
+            <!-- ============================== -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>1.8.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.5.2</version>
+            </dependency>
+            <!-- 加入spring&web依赖包 end -->
+
+            <!-- ============================== -->
+            <!-- mybatis+mysql配置 -->
+            <!-- ============================== -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>persistence-api</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tk.mybatis</groupId>
+                <artifactId>mapper</artifactId>
+                <version>${tk.mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-core</artifactId>
+                <version>1.3.2</version>
+                <scope>compile</scope>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.9</version>
+            </dependency>
+
+            <!-- ============================== -->
+            <!-- logback 配置 -->
+            <!-- ============================== -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.logback-extensions</groupId>
+                <artifactId>logback-ext-spring</artifactId>
+                <version>0.1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cwbase</groupId>
+                <artifactId>logback-redis-appender</artifactId>
+                <version>1.1.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>1.7.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.9</version>
+            </dependency>
+            <!-- Logback exception log -->
+            <dependency>
+                <groupId>org.codehaus.janino</groupId>
+                <artifactId>commons-compiler</artifactId>
+                <version>2.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.janino</groupId>
+                <artifactId>janino</artifactId>
+                <version>2.5.16</version>
+            </dependency>
+
+            <!-- 加入logback依赖包 end -->
+
+            <!-- ============================== -->
+            <!-- 阿里云短信 -->
+            <!-- ============================== -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>3.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+
+            <!-- ============================== -->
+            <!-- 个推依赖 -->
+            <!-- ============================== -->
+            <dependency>
+                <groupId>com.gexin.platform</groupId>
+                <artifactId>gexin-rp-sdk-http</artifactId>
+                <version>4.0.1.9</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gexin.platform</groupId>
+                <artifactId>gexin-rp-sdk-base</artifactId>
+                <version>4.0.0.19</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gexin.platform</groupId>
+                <artifactId>gexin-rp-sdk-template</artifactId>
+                <version>4.0.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gexin.platform</groupId>
+                <artifactId>gexin-rp-fastjson</artifactId>
+                <version>1.0.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>3.2.0</version>
+            </dependency>
+
+
+            <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-core</artifactId>
+                <version>5.7.0</version>
+            </dependency>
+            <!--注意此处 不能说使用activemq-all  有jar包会造成冲突 且很难发现
+                  目前还没有进行一个个的jar包排除 只使用broker与core包没有报错情况 超级坑爹的说 使用maven  dependency tree 排查 会好一点-->
+            <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-broker</artifactId>
+                <version>5.14.5</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <!-- ============================== -->
+    <!-- 核心框架版本号指定 -->
+    <!-- ============================== -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <commons-codec.version>1.9</commons-codec.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
+        <commons-fileupload>1.3.1</commons-fileupload>
+        <commons-beanutils.version>1.9.2</commons-beanutils.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
+        <druid.version>1.0.14</druid.version>
+        <jdbc.driver.groupId>mysql</jdbc.driver.groupId>
+        <java.version>1.7</java.version>
+        <jdbc.driver.artifactId>mysql-connector-java</jdbc.driver.artifactId>
+        <jdbc.driver.version>5.1.35</jdbc.driver.version>
+        <javax.persistence.version>1.0.2</javax.persistence.version>
+        <jackson-databind.version>2.5.2</jackson-databind.version>
+        <mybatis.version>3.3.0</mybatis.version>
+        <mybatis-spring.version>1.2.3</mybatis-spring.version>
+        <pagehelper.version>3.7.4</pagehelper.version>
+        <spring.version>4.3.7.RELEASE</spring.version>
+        <shiro.version>1.2.3</shiro.version>
+        <tk.mybatis.version>3.4.3</tk.mybatis.version>
+
+
+    </properties>
+
+    <!-- ============================== -->
+    <!-- maven 仓库配置 -->
+    <!-- ============================== -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>1.8</maven.compiler.target>
+                <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+                <downloadSources>true</downloadSources>
+            </properties>
+        </profile>
+
+    </profiles>
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <!-- <includes>
+                     <include>**/*.properties</include>
+                     <include>**/*.xml</include>
+                 </includes>-->
+                <filtering>false</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- <includes>
+                     <include>**/*.*</include>
+                 </includes>-->
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
+    </build>
+
+</project>

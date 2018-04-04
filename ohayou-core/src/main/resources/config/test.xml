@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <bean id="cc" class="com.cc.ccspace.test.spring.BeanContextTest"/>
+    <!-- bean的注入两种方式 使用代码内注入的方式也可 举例WorkerConfig-->
+    <!--<bean id="worker" class="com.cc.ccspace.test.spring.aop.Nurse"/>-->
+
+
+    <context:component-scan base-package="com.cc.ccspace.test.*"/>
+   <!-- execution(public * *(..))
+    任何一个以“set”开始的方法的执行：
+    execution(* set*(..))
+    UserService 接口的任意方法的执行：
+    execution(* com.service.UserService.*(..))
+    定义在service包里的任意方法的执行：
+    execution(* com.service.*.*(..))
+    定义在service包或者子包里的任意方法的执行：
+    execution(* com.service..*.*(..))-->
+    <!-- 切面示例-->
+    <aop:config>
+            <aop:aspect ref="camera">
+                <!-- 切点  任意com.cc.ccspace.test包或者子包里的work方法的执行-->
+                <aop:pointcut id="work" expression="execution(* com.cc.ccspace.test..work(..))"/>
+                <!-- 前置通知 -->
+                <aop:before pointcut-ref="work" method="monitor"/>
+                <!-- 后置通知-->
+                <aop:after  pointcut-ref="work" method="playBack"/>
+            </aop:aspect>
+            </aop:config>
+</beans>

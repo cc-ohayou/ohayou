@@ -1,0 +1,16 @@
+package com.cc.ccspace.facade.domain.common.util;
+
+import com.cc.ccspace.facade.domain.common.annotation.InterceptRequired;
+import org.springframework.web.method.HandlerMethod;
+
+/**
+ * @AUTHOR CF
+ * @DATE Created on 2018/1/24 21:15.
+ */
+public class HandlerAnnotationUtil {
+    public static boolean annotationJudgePassed(HandlerMethod handler) {
+        return handler.getMethodAnnotation(InterceptRequired.class) != null &&
+                !handler.getMethodAnnotation(InterceptRequired.class).required();
+    }
+
+}

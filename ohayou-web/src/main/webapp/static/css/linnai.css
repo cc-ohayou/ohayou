@@ -1,0 +1,82 @@
+body {
+    width: 35rem;
+    margin: 0 auto;
+    /*text-align:center;*/
+    /*font-family: Tahoma, Verdana, Arial, sans-serif;*/
+    /*
+    background-image:;
+    */
+    z-index: 1000;
+    background-attachment:fixed;/*设置背景图片填充  固定不会滚动fixed  scroll可滚动*/
+    background-size: 100%;
+    background-position:top;/*设置图片居中*/
+    background-repeat:no-repeat;
+    /*color:#000000;*/
+    /*padding-top:30px;*/
+    height:auto;
+    font-size:medium;
+    /*背景透明度 0.0为完全透明 文字看不见 背景完全突出 opacity即可 前面的是为了兼容一些个别的浏览器*/
+    filter:alpha(Opacity=60);-moz-opacity:0.6;opacity: 0.98;
+}
+#main-board{
+
+}
+/**/
+#createTable{
+    width:auto;
+    height:auto;
+    position:absolute;
+    left:50%;
+    top:30%;
+    margin:-100px 0 0 -150px;
+    text-align:left;
+    z-index: 2000;
+    /*border:1px #CCC solid;*/
+}
+.main-video{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left:0px;
+    top: 0px;
+    bottom: 0px;
+    overflow:hidden;
+    /*margin:-100px 0 0 -150px;*/
+    border: dashed 1px #5FB878;
+    z-index: 1000;
+}
+#but{height: 40px;
+    background-color: #009688;
+}
+#ccCodePic{
+    width:auto;
+    height:auto;
+    position:absolute;
+    left:50%;
+    top:45%;
+    margin:-100px 0 0 -150px;
+    text-align:left;
+    z-index: 2000;
+    /*border:1px #CCC solid;*/
+}
+.article{
+    width:auto;
+    height:auto;
+    position:absolute;
+    left:50%;
+    top:60%;
+    margin:-100px 0 0 -150px;
+    /*margin-top: 20px;*/
+    text-align:left;
+    border:1px solid #000000;
+}
+.article-img{
+    width:auto;
+    height:auto;
+    position:relative;
+    margin:10px;
+}
+/*.header{*/
+    /*position:absoulute;*/
+
+/*}*/

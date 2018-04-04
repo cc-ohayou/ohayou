@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="Mysql" targetRuntime="MyBatis3">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <!-- caseSensitive默认false，当数据库表名区分大小写时，可以将该属性设置为true -->
+            <property name="caseSensitive" value="false"/>
+        </plugin>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL=""
+                        userId=""
+                        password="">
+        </jdbcConnection>
+
+        <!--POJO 路径 TODO 每个开发需要手动配置-->
+        <javaModelGenerator targetPackage="com.cc.ccspace.facade.domain.dataobject"
+                            targetProject="G:\iwspace\cc-space\ccspace-facade\src\main\java"/>
+
+        <!--sql mapper 路径 TODO 每个开发需要手动配置-->
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="G:\iwspace\cc-space\ccspace-core\src\main\resources"/>
+
+        <!--mapper dao 路径 TODO 每个开发需要手动配置-->
+        <javaClientGenerator targetPackage="com.cc.ccspace.core.dao.mapper"
+                             targetProject="G:\iwspace\cc-space\ccspace-core\src\main\java"
+                             type="XMLMAPPER"/>
+
+        <!--需要自动生成的表-->
+        <!--<table tableName="balance_operate" domainObjectName="BalanceOperateDO"/>-->
+        <!--<table tableName="fund_flow" domainObjectName="FundFlow"/>-->
+        <!--<table tableName="balance" domainObjectName="BalanceDO"/>-->
+        <!--<table tableName="deposit" domainObjectName="DepositDO"/>-->
+        <!--<table tableName="withdraw" domainObjectName="WithdrawDO"/>-->
+        <!--<table tableName="commission_statistics" domainObjectName="CommissionStatisticsDO"/>-->
+        <!--<table tableName="weekly_commission_statistics" domainObjectName="WeeklyCommissionStatisticsDO"/>-->
+        <!--<table tableName="bg_homepage_daily_statistic" domainObjectName="BgHomepageDailyStatisticDO"/>-->
+        <!--<table tableName="warning_line" domainObjectName="WarningLineDO"/>-->
+        <!--<table tableName="strategy_fee" domainObjectName="StrategyFeeDO"/>-->
+        <!--<table tableName="strategy_fee_record" domainObjectName="StrategyFeeRecordDO"/>-->
+        <!--<table tableName="strategy_trade" domainObjectName="StrategyTradeDO"/>-->
+        <!--<table tableName="investor_config" domainObjectName="InvestorConfigDO"/>-->
+        <!--<table tableName="merchant_config" domainObjectName="MerchantConfigDO"/>-->
+        <!--<table tableName="ex_right_dividend" domainObjectName="ExRightDividendDO"/>-->
+        <!--<table tableName="stock_info" domainObjectName="StockInfoDO"/>-->
+        <!--<table tableName="stock_config" domainObjectName="StockConfigDO"/>-->
+        <!--<table tableName="merchant_info" domainObjectName="MerchantInfoDO"/>-->
+        <!--<table tableName="system_config" domainObjectName="SystemConfigDO"/>-->
+        <!--<table tableName="user" domainObjectName="UserDO"/>-->
+        <!--<table tableName="user_bank_card" domainObjectName="UserBankCardDO"/>-->
+        <!--<table tableName="session" domainObjectName="SessionDO"/>-->
+        <!--<table tableName="login_history" domainObjectName="LoginHistoryDO"/>-->
+        <!--<table tableName="bg_user" domainObjectName="BgUserDO"/>-->
+        <!--<table tableName="bg_session" domainObjectName="BgUserSessionDO"/>-->
+        <!--<table tableName="bg_login_history" domainObjectName="BgLoginHistoryDO"/>-->
+        <!--<table tableName="bg_role" domainObjectName="BgRoleDO"/>-->
+        <!--<table tableName="bg_auth" domainObjectName="BgAuthDO"/>-->
+        <!--<table tableName="bg_role_auth" domainObjectName="BgRoleAuth"/>-->
+        <!--<table tableName="bg_user_role" domainObjectName="BgUserRole"/>-->
+        <!--<table tableName="simulate_strategy" domainObjectName="SimulateStrategyDO"/>-->
+        <!--<table tableName="simulate_trade" domainObjectName="SimulateTradeDO"/>-->
+        <!--<table tableName="simulate_balance" domainObjectName="SimulateBalanceDO"/>-->
+        <!--<table tableName="simulate_fund_flow" domainObjectName="SimulateFundFlowDO"/>-->
+        <!--<table tableName="simulate_rank" domainObjectName="SimulateRankDO"/>-->
+        <table tableName="ppx_test" domainObjectName="PpxDO"/>
+<!---->
+    </context>
+</generatorConfiguration>

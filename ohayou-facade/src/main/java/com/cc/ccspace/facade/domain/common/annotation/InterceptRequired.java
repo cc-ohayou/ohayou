@@ -21,5 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 //@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public  @interface InterceptRequired {
-    boolean required() default true;  
+    //默认true 收到拦截器校验
+    boolean required() default true;
+    //频率校验标识 非空则进行拦截频率限制 默认不校验
+    String rateLimit() default "";
 }  

@@ -12,5 +12,8 @@ public class HandlerAnnotationUtil {
         return handler.getMethodAnnotation(InterceptRequired.class) != null &&
                 !handler.getMethodAnnotation(InterceptRequired.class).required();
     }
-
+    public static boolean rateLimitInterceptOn(HandlerMethod handler) {
+        return handler.getMethodAnnotation(InterceptRequired.class) != null &&
+                !"".equals(handler.getMethodAnnotation(InterceptRequired.class).rateLimit());
+    }
 }

@@ -28,58 +28,7 @@ public class RedisConstants {
     //全局id生成器 master key 前缀
     public static final String PREFIX_SYSTEM_ID = "SYS_ID_";
 
-    //登陆拦截路径
-    public static final String LOGIN_AUTH = "phoenix_login_auth";
 
-    /**
-     * 股票领域 相关常量
-     */
-    public static final String PHOENIX_STOCK_INFO_CACHE = "PHOENIX_STOCK_INFO_CACHE";// REDIS_股票实时行情
-    //控制股票开市校验 以及停牌校验的rediskey
-    public static final String STRATEGY_TEST_SIGN_SWITCH = "PHOENIX_STRATEGY_TEST_SIGN_SWITCH";
-    //股票行情信息定时规则
-    public static final String PHOENIX_STOCK_MARKET_UPDATE_CRON = "PHOENIX_STOCK_MARKET_UPDATE_CRON";
-    //股票基本信息每天一次加载 定时规则
-    public static final String PHOENIX_STOCK_BASE_UPDATE_CRON = "PHOENIX_STOCK_BASE_UPDATE_CRON";
-    //股票基本信息定时任务 一天执行一次
-    public static final String PHOENIX_STOCK_BASE_UPDATE_SIGN = "PHOENIX_STOCK_BASE_UPDATE_SIGN";
-    //key的超时时间  早十分钟不到一天
-    public static final int PHOENIX_STOCK_BASE_UPDATE_EXPIRE_TIME = 85800;
-    //token错误更新失败时 重新更新token信息
-    public static String PHOENIX_STOCK_TOKEN_ERROR_COU = "PHOENIX_STOCK_TOKEN_ERROR_COU";
-    //超时时间60s
-    public static int PHOENIX_STOCK_TOKEN_ERROR_COU_EXPIRE = 60;
-
-    //热门股票key
-    public static final String PHOENIX_HOT_STOCKS ="PHOENIX_HOT_STOCKS" ;
-    //股票行情的开关key 测试用
-    public static final String STOCK_MARKET_SWITCH = "PHOENIX_STOCK_MARKET_SWITCH";
-
-    // 所有交易成功的策略
-    public static final String PHOENIX_ALL_SUCCESS_STRATEGIES = "PHOENIX_ALL_SUCCESS_STRATEGIES";
-    //结算定时的标识
-    public static final String PHOENIX_SETTLE_TASK_SIGN = "PHOENIX_SETTLE_TASK_SIGN";
-    //结算定时的cron规则
-    public static final String PHOENIX_STRATEGY_SETTLE_CRON = "PHOENIX_STRATEGY_SETTLE_CRON";
-    public static final String HS_TOKEN_AUTH_TYPE = "HS_TOKEN_AUTH_TYPE";
-
-    //休市后自动撤销买入中卖出中的交易
-    public static final String PHOENIX_AUTO_CANCEL_TRADE_CRON = "PHOENIX_AUTO_CANCEL_TRADE_CRON";
-
-    /**
-     * 合伙人相关
-     */
-    public static final String DAILY_COMMISSION_STATISTIC = "phoenix-partner-dailycommission-task-sign";
-    //默认每天下午16点40 50各执行一次任务
-    public static final String DAILY_COMMISSION_STATISTIC_CRON = "phoenix-partner-dailycommission-task-cron";
-    //周五标识
-    public static final String COMMISSION_FRIDAY = "phoenix-bg-dailycommission-friday";
-    /**
-     * 后台管理每日统计标识
-     */
-    public static String BgHomePageDailyStatisticSign = "BgHomePageDailyStatisticSign";
-    //1800s每半小时过期 每半小时执行redis中可以随时更改key来执行定时任务
-    public static int BG_HOME_STATIC_EXPIRE = 1800;
 
 
     /**
@@ -99,5 +48,65 @@ public class RedisConstants {
     public static final int SEND_MESSAGE_EXPIRE_TIME = 60*60;
 
     public static final String SEND_MESSAGE_COUNT_START_ONE = "1";
+    //redis lock用常量
+    //锁允许重试模式
+    public static final String LOCK_MODEL_ALLOW_RETRY = "allowRetry";
+    //分布式锁开关 默认为空不打开
+    public static final String REDIS_LOCK_SWITCH = "ps-str-redis-lock-switch";
 
+    /**
+     * redis lock模式  不为空则说明使用降级模式
+     * 一旦lock被某一线程持有 其他线程直接返回false 不在进行重试操作 降低线程sleep重试的性能损耗
+     */
+    public static final  String LOCK_MODEL="ps_str_lock_model";
+
+    /**
+     * 锁等待时间，防止线程饥饿
+     */
+    public static final int timeoutMsecs = 1* 1000;
+    /**
+     * 锁超时时间，防止线程在入锁以后，无限的执行等待
+     */
+    public static final int expireMsecs = 5 * 1000;
+
+    /**
+     * 拦截校验相关配置redis key和常量
+     */
+    //频率限制‘
+    public static final String RATE_LIMIT_SCRIPT = "if redis.call('exists',KEYS[1])==1 and tonumber(redis.call('get',KEYS[1]))>tonumber(ARGV[2]) then return 0 end local times = redis.call('incr',KEYS[1]) if times == 1 then redis.call('expire',KEYS[1],ARGV[1])   end if times>tonumber(ARGV[2]) then return 0 end return 1";
+
+
+    public static final String IP = "PS-STR-IP-";
+    public static final String IP_MINUTE = "-MINUTE";
+    public static final String IP_HOUR = "-HOUR";
+    public static final String IP_DAY = "-DAY";
+    public static final String IP_MONTH = "-MONTH";
+    //UA信息
+    public static final String UA = "PS-STR-UA-";
+    public static final String UA_MINUTE = "-MINUTE";
+    public static final String UA_HOUR = "-HOUR";
+    public static final String UA_DAY = "-DAY";
+    public static final String UA_MONTH = "-MONTH";
+
+
+    public static final String ONE_MINUTE ="60" ;
+    public static final String ONE_MINUTE_LIMIT_COU ="5" ;
+    public static final String ONE_HOUR ="3600" ;
+    public static final String ONE_HOUR_LIMIT_COU = "50";
+    public static final String ONE_DAY = "86400";
+    public static final String ONE_DAY_LIMIT_COU ="100" ;
+    public static final String ONE_MONTH = "2678400";
+    public static final String ONE_MONTH_LIMIT_COU ="500" ;
+    //频率限制校验的开关
+    public static final String IP_SWITCH = "ps-str-ip-ua-limit-switch";
+
+    public static final String COU_LIMIT_INFO = "PS-HASH-IP-COU-LIMIT-CONFIG";
+    public static final String COU_LIMIT_INFO_MIN = "min-cou";
+    public static final String COU_LIMIT_INFO_HOUR = "hour-cou";
+    public static final String COU_LIMIT_INFO_DAY = "day-cou";
+    public static final String COU_LIMIT_INFO_MONTH = "month-cou";
+
+    public static final String RATE_LIMIT_WHITE_IP = "ps-set-whiteips";
+    public static final String RATE_LIMIT_BLACK_IP = "ps-set-blackips";
+    public static final String IP_UA_LIMIT_URLS = "ps-str-ip-ua-limit-urls";
 }

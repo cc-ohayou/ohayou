@@ -108,7 +108,7 @@
             <maxFileSize>100MB</maxFileSize>
         </rollingPolicy>
         <encoder>
-            <pattern>%msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %msg%n</pattern>
             <!--<charset>UTF-8</charset>-->
         </encoder>
     </appender>
@@ -129,7 +129,61 @@
     </logger>
     <!-- redis任务日志 结束 -->
 
+    <appender name="redisLogLocal" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/redis/redisLog-${appid}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/redis/redisLog-${appid}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>14</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %msg%n</pattern>
+            <!--<charset>UTF-8</charset>-->
+        </encoder>
+    </appender>
+    <!-- 配置异步记录日志-->
+    <appender name="redisLog" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 		不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志
+         -->
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>512</queueSize>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="redisLogLocal"/>
+    </appender>
+    <!--additivity的作用在于 children-logger是否使用 rootLogger配置的appender进行输出。
+    false：表示只用当前logger的appender-ref。
+    true：表示当前logger的appender-ref和rootLogger的appender-ref都有效。-->
+    <logger name="com.cc.ccspace.facade.domain.common.util.logutil.RedisLog" level="INFO" additivity="false">
+        <appender-ref ref="redisLog"/>
+    </logger>
 
+    <appender name="rateLimitLogLocal" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/rateLimit/rateLimitLog-${appid}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/rateLimit/rateLimitLog-${appid}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>14</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+            <!--<charset>UTF-8</charset>-->
+        </encoder>
+    </appender>
+    <!-- 配置异步记录日志-->
+    <appender name="rateLimitLog" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 		不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志
+         -->
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>512</queueSize>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="rateLimitLogLocal"/>
+    </appender>
+    <!--additivity的作用在于 children-logger是否使用 rootLogger配置的appender进行输出。
+    false：表示只用当前logger的appender-ref。
+    true：表示当前logger的appender-ref和rootLogger的appender-ref都有效。-->
+    <logger name="com.cc.ccspace.facade.domain.common.util.logutil.RateLimitCheckLog" level="INFO" additivity="false">
+        <appender-ref ref="rateLimitLog"/>
+    </logger>
     <!-- ====================================== -->
     <!-- error输入输出日志 -->
     <!-- ====================================== -->

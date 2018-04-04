@@ -1,31 +1,37 @@
 package com.cc.ccspace.facade.domain.bizobject.common;
 
-
-import com.cc.ccspace.facade.domain.common.constants.CommonConstants;
+import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * @AUTHOR CF
- * @DATE Created on 2017/8/6 23:12.
+ * @DATE Created on 2017/7/12 14:28.
  */
-public class Result<T>{
-    private int code;//返回结果的代码 0代表请求正常  -1代表请求失败
-    private String msg;//返回信息
-    private T data;//返回对象
-    public Result(int code, String msg, T data){
-        this.code=code;
-        this.msg=msg;
-        this.data=data;
-   }
-   public Result(T data){
-       this(0, CommonConstants.SUCCESS_MSG,data);
-   }
-    public Result(String msg){
-        this(-1, msg,null);
-    }
-    public Result(){
-        this(-1, CommonConstants.FAIL_MSG,null);
+public class Result implements Serializable {
+    private int code;
 
+    private Object data;
+
+    private String msg;
+
+    public Result() {
+        this(0, null, "");
     }
+
+    public Result(Object data) {
+        this(0, data, "");
+    }
+
+    public Result(int code, String message) {
+        this(code, null, message);
+    }
+
+    public Result(int code, Object data, String message) {
+        this.code = code;
+        this.data = data != null ? data : new HashMap<String, String>();
+        this.msg = message != null ? message : "";
+    }
+
     public int getCode() {
         return code;
     }
@@ -34,19 +40,19 @@ public class Result<T>{
         this.code = code;
     }
 
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
     public String getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
+    public void setMsg(String message) {
+        this.msg = message;
     }
 }

@@ -1,10 +1,12 @@
 package com.cc.ccspace.core.manager;
 
 
+import com.cc.ccspace.facade.domain.common.ThreadLocals.BaseLockSign;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 避免将底层的redis ip 等全局配置暴露给外界 对redis连接的获取和释放自动完成,避免忘记释放的问题
@@ -166,16 +168,38 @@ public interface RedisManager {
      */
      void psubscribe( JedisPubSub jedisPubSub,  String describe,String... patterns);
 
+
+    boolean reachRateLimit(String key, String s, String s1);
+
     /**
-     * @description  借助redis完成全局的分布式锁
+     * @description
+     * 借助redis完成全局的分布式锁
+     * 业务执行完后注意unlock 否则会持有该锁60s 默认值
+     * 其他线程才有机会再次获取
+     * 限制：单机模式
+     * 集群下使用redession来实现 超高并发 集群不同步的情况下锁不住
+     * 也可借助zookeeper来实现分布式锁
+     *
      * @author CF create on 2018/3/21 9:40
      */
-    boolean  lock(String key) throws InterruptedException;
+    boolean  lock(String key,String lockModel,BaseLockSign lockThreadLocal) throws Exception;
 
     /**
      * @description 使用完释放锁
      * @author CF create on 2018/3/21 9:41
      */
-    void  unLock(String key);
+    void  unLock(String key,BaseLockSign lockThreadLocal);
+
+    /**
+     * @description 获取集合
+     * @author CF create on 2018/3/23 11:21
+     */
+    Set<String> smembers(String key);
+
+    /**
+     * @description 根据ip ua信息限流特定url
+     * @author CF create on 2018/3/26 15:51
+     */
+    boolean ipUaInfoReachLimit(String uaInfo, String realIp, String url);
 
 }

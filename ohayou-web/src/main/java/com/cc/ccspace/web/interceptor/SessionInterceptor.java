@@ -3,11 +3,15 @@ package com.cc.ccspace.web.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.cc.ccspace.core.manager.RedisManager;
-import com.cc.ccspace.facade.domain.bizobject.common.PhoenixResult;
+import com.cc.ccspace.facade.domain.bizobject.common.Result;
 import com.cc.ccspace.facade.domain.common.constants.RedisConstants;
+import com.cc.ccspace.facade.domain.common.exception.ErrorEnum;
+import com.cc.ccspace.facade.domain.common.util.HandlerAnnotationUtil;
+import com.cc.ccspace.web.common.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -32,11 +36,6 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 
     // 会话 过期时间  ms  5天 每次打开app自动更新会话有效时间
     private final long expired = 5 * 24 * 60 * 60 * 1000;
-    //app启动必然且只访问一次的接口
-    private final String APP_START_ONCE_VISIT_PATH = "/queryMerchantInfo";
-    private final String defaultNoneAuthPath = ",/login,/register,/hotLastNDays,/isTradeDay,/market,/verifyCode," +
-            "/updateLoginPdCode,/loginPasswd,/receiveNotify,/updateTransPdVerifyCode,/queryMerchantInfo,/queryFundsAccountTest";
-
     /**
      * 在业务处理器处理请求之前被调用
      * 如果返回false
@@ -51,6 +50,14 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler) throws Exception {
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+        if(ipUaUrlLimitTrue((HandlerMethod) handler,request,response)){
+            return false;
+        }
+        if (HandlerAnnotationUtil.annotationJudgePassed((HandlerMethod) handler)) {
+            return true;
+        }
 //        request.setCharacterEncoding("utf-8");
       /*  String requestUri = request.getRequestURI();
         String lastPath = requestUri.substring(requestUri.lastIndexOf("/"));
@@ -73,17 +80,32 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
-    //  初始化白名单路径
-    private String initNoneAuthPath() {
-        String noneAuthPath = redisManager.get(RedisConstants.LOGIN_AUTH);//拦截路径 逗号加路径  默认登录不拦截
-        if (StringUtils.isEmpty(noneAuthPath)) {
-            noneAuthPath = defaultNoneAuthPath;
-            redisManager.set(RedisConstants.LOGIN_AUTH, defaultNoneAuthPath);
+
+    private boolean ipUaUrlLimitTrue(HandlerMethod method, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if(!StringUtils.isEmpty(redisManager.get(RedisConstants.IP_SWITCH))
+                && (HandlerAnnotationUtil.rateLimitInterceptOn(method) || specialUrlListContainsReqUrl(request))
+                && ipUaInfoReachLimit(request)){
+            returnErrorMessage(response, ErrorEnum.VISIT_TOO_MUCH.getCode(), ErrorEnum.VISIT_TOO_MUCH.getMsg());
+            return true;
         }
-        return noneAuthPath;
+        return  false;
     }
 
+    private boolean specialUrlListContainsReqUrl(HttpServletRequest request) {
+        String urls = redisManager.get(RedisConstants.IP_UA_LIMIT_URLS);
+        return !StringUtils.isEmpty(urls) && urls.contains("," + request.getRequestURI());
+    }
 
+    /**
+     * @description  统一ip和ua信息的限制是否达到 使用redis进行特定url的频率拦截
+     * @author CF create on 2018/3/23 14:31
+     */
+    private boolean ipUaInfoReachLimit(HttpServletRequest request) {
+        String realIp= HttpUtil.getIpAddress(request);
+        String uaInfo = request.getHeader("user-agent");
+        String url = request.getRequestURI();
+        return redisManager.ipUaInfoReachLimit(uaInfo,realIp,url);
+    }
 
     /**
      * 在业务处理器处理请求执行完成后,生成视图之前执行的动作
@@ -115,7 +137,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
      * @author CF create on 2017/7/12 16:05
      */
     private void returnErrorMessage(HttpServletResponse response, int code, String errorMessage) throws IOException {
-        PhoenixResult rst = new PhoenixResult(code, null, errorMessage);
+        Result rst = new Result(code, null, errorMessage);
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         String res = JSON.toJSONString(rst);

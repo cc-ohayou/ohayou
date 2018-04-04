@@ -1,11 +1,12 @@
 package com.cc.ccspace.core.manager.impl;
 
 import com.cc.ccspace.core.manager.RedisManager;
-import com.cc.ccspace.facade.domain.bizobject.handler.MyThreadTaskAbortPolicy;
+import com.cc.ccspace.facade.domain.common.ThreadLocals.BaseLockSign;
 import com.cc.ccspace.facade.domain.common.constants.CommonConstants;
 import com.cc.ccspace.facade.domain.common.constants.RedisConstants;
 import com.cc.ccspace.facade.domain.common.util.DateUtil;
-import com.cc.ccspace.facade.domain.common.util.logutil.InitLog;
+import com.cc.ccspace.facade.domain.common.util.logutil.RateLimitCheckLog;
+import com.cc.ccspace.facade.domain.common.util.logutil.RedisLog;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -23,28 +24,45 @@ import java.util.concurrent.*;
  * @DATE Created on 2017/9/18 18:49.
  */
 @Component
-public class RedisManagerImpl implements RedisManager {
+public class RedisManagerImpl extends RedisConstants implements RedisManager {
     private static JedisPool jedisPool = null;
-    private static InitLog logger = new InitLog();
+    private static RedisLog logger = new RedisLog();
+    private RateLimitCheckLog limitLog=new RateLimitCheckLog();
+
     /**
      * redis lock模式  不为空则说明使用降级模式
      * 一旦lock被某一线程持有 其他线程直接返回false 不在进行重试操作 降低线程sleep重试的性能损耗
      */
-    private static final  String LOCK_MODEL="ps_str_lock_model";
+    private static final String LOCK_MODEL = "ps_str_lock_model";
+    private static String rateLimitShaStr;
 
     /**
      * 锁等待时间，防止线程饥饿
      */
-    private  int timeoutMsecs = 1* 1000;
+    private int timeoutMsecs = 1 * 1000;
     /**
      * 锁超时时间，防止线程在入锁以后，无限的执行等待
      */
     private int expireMsecs = 60 * 1000;
+
     //   初始化Redis连接池
     static {
         initJedisPool();
-    }
+        initSpecialScript();
 
+    }
+    private static void initSpecialScript() {
+        Jedis jedis = getJedis();
+        try {
+            rateLimitShaStr = jedis.scriptLoad(RATE_LIMIT_SCRIPT);
+        } catch (Exception e) {
+            logger.error("redis init error rateLimitShaStr init failed", e);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+    }
     /**
      * 获取Jedis实例
      */
@@ -58,14 +76,14 @@ public class RedisManagerImpl implements RedisManager {
                 }
                 jedis = jedisPool.getResource();
                 logger.info("时间" + DateUtil.standardFormat.get().format(new Date()) + ",jedisPool中实例情况," +
-                        "active=" + jedisPool.getNumActive()+",idle="+jedisPool.getNumIdle()+",waiters="+jedisPool.getNumWaiters());
+                        "active=" + jedisPool.getNumActive() + ",idle=" + jedisPool.getNumIdle() + ",waiters=" + jedisPool.getNumWaiters());
             } catch (Exception e) {
                 logger.error("Redis Exception :", e);
                 logger.warn("时间" + DateUtil.standardFormat.get().format(new Date()) + ",jedisPool中实例情况," +
-                        "active=" + jedisPool.getNumActive()+",idle="+jedisPool.getNumIdle()+",waiters="+jedisPool.getNumWaiters());
+                        "active=" + jedisPool.getNumActive() + ",idle=" + jedisPool.getNumIdle() + ",waiters=" + jedisPool.getNumWaiters());
                 if (jedisPool.getNumIdle() == 0 && jedisPool.getNumActive() == RedisConstants.MAX_ACTIVE) {
                     logger.warn("时间" + DateUtil.standardFormat.get().format(new Date()) + ",jedisPool中实例耗尽," +
-                            "active=" + jedisPool.getNumActive()+jedisPool.getNumIdle());
+                            "active=" + jedisPool.getNumActive() + jedisPool.getNumIdle());
                 }
                 jedisPool = null;
                 initJedisPool();// 防止意外情况资源耗尽 重新初始化jedisPool 这个只是一解燃眉之急而已 最终解决还是要在程序中注意及时释放连接实例
@@ -131,6 +149,9 @@ public class RedisManagerImpl implements RedisManager {
             }
         }
         return map;
+    }
+     private Map<String, String> hgetAll(String key, Jedis jedis) {
+        return  jedis.hgetAll(key);
     }
 
     @Override
@@ -357,12 +378,12 @@ public class RedisManagerImpl implements RedisManager {
     @Override
     public List<String> configGet(String pattern) {
         Jedis jedis = getJedis();
-        List<String> result=null;
+        List<String> result = null;
         try {
-            result=jedis.configGet(pattern);
-        }catch (Exception e){
+            result = jedis.configGet(pattern);
+        } catch (Exception e) {
             logger.error("redis configGet failed, pattern=" + pattern);
-        }finally{
+        } finally {
             if (jedis != null) {
                 jedis.close();
             }
@@ -374,12 +395,12 @@ public class RedisManagerImpl implements RedisManager {
     public String configSet(String parameter, String value) {
 
         Jedis jedis = getJedis();
-        String result=null;
+        String result = null;
         try {
-            result=jedis.configSet(parameter,value);
-        }catch (Exception e){
-            logger.error("redis configSet failed, parameter=" + parameter+",value="+value);
-        }finally{
+            result = jedis.configSet(parameter, value);
+        } catch (Exception e) {
+            logger.error("redis configSet failed, parameter=" + parameter + ",value=" + value);
+        } finally {
             if (jedis != null) {
                 jedis.close();
             }
@@ -391,12 +412,12 @@ public class RedisManagerImpl implements RedisManager {
     public Long publish(String channel, String message) {
 
         Jedis jedis = getJedis();
-        Long result=null;
+        Long result = null;
         try {
-            result=jedis.publish(channel,message);
-        }catch (Exception e){
-            logger.error("redis publish failed, channel=" + channel+",message="+message);
-        }finally{
+            result = jedis.publish(channel, message);
+        } catch (Exception e) {
+            logger.error("redis publish failed, channel=" + channel + ",message=" + message);
+        } finally {
             if (jedis != null) {
                 jedis.close();
             }
@@ -405,13 +426,13 @@ public class RedisManagerImpl implements RedisManager {
     }
 
     @Override
-    public void subscribe(JedisPubSub jedisPubSub, String describe,String... channels) {
+    public void subscribe(JedisPubSub jedisPubSub, String describe, String... channels) {
         Jedis jedis = getJedis();
         try {
-            jedis.subscribe(jedisPubSub,channels);
-        }catch (Exception e){
-            logger.error("redis subscribe failed, jedisPubSubName=" + describe+",channels="+ Arrays.toString(channels));
-        }finally{
+            jedis.subscribe(jedisPubSub, channels);
+        } catch (Exception e) {
+            logger.error("redis subscribe failed, jedisPubSubName=" + describe + ",channels=" + Arrays.toString(channels));
+        } finally {
             if (jedis != null) {
                 jedis.close();
             }
@@ -419,50 +440,88 @@ public class RedisManagerImpl implements RedisManager {
     }
 
     @Override
-    public void psubscribe(JedisPubSub jedisPubSub, String describe,String... patterns) {
+    public void psubscribe(JedisPubSub jedisPubSub, String describe, String... patterns) {
         Jedis jedis = getJedis();
         try {
-            jedis.subscribe(jedisPubSub,patterns);
-        }catch (Exception e){
-            logger.error("redis psubscribe failed, jedisPubSubName=" + describe+",patterns="+ Arrays.toString(patterns));
-        }finally{
+            jedis.subscribe(jedisPubSub, patterns);
+        } catch (Exception e) {
+            logger.error("redis psubscribe failed, jedisPubSubName=" + describe + ",patterns=" + Arrays.toString(patterns));
+        } finally {
             if (jedis != null) {
                 jedis.close();
             }
         }
     }
     @Override
-    public boolean lock(String lockKey) {
+    public  Set<String> smembers(String key) {
         Jedis jedis = getJedis();
-        //jedis连接获取不到的情况直接返回true 也即redis lock不再起效 所有进来的都直接认为成功
-        if (jedis == null) {
+        Set<String> members = new HashSet<>();
+        try {
+            members = jedis.smembers(key);
+        } catch (Exception e) {
+            logger.error("redis smembers failed, key=" + key);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+        return members;
+    }
+
+    public  Set<String> smembers(String key,Jedis jedis) {
+        return jedis.smembers(key);
+    }
+    @Override
+    public boolean lock(String lockKey, String lockModel, BaseLockSign lockThreadLocal) {
+
+        //重复使用锁的情况 只加一次
+        if (lockThreadLocal.getLockSign()) {
             return true;
         }
+        Jedis jedis = getJedis();
+        //jedis连接获取不到的情况直接返回true 也即redis lock不再起效 所有进来的都直接认为成功
+        if (jedis == null || !StringUtils.isEmpty(jedis.get(RedisConstants.REDIS_LOCK_SWITCH))) {
+            return true;
+        }
+        boolean lockSign = false;
         try {
-            boolean lockModelHighCostLevel = StringUtils.isEmpty(jedis.get(LOCK_MODEL));
-            if (lockModelHighCostLevel) {
+            boolean lockModelHighCostAllow = StringUtils.isEmpty(jedis.get(LOCK_MODEL));
+            //全局允许且采用高性能重试模式
+            if (lockModelHighCostAllow && LOCK_MODEL_ALLOW_RETRY.equals(lockModel)) {
                 /*重试模式 场景举例  甲客户充值时遇到task占用余额lock 此时可以等待一秒钟左右进行重试
-                  task操作完后可以继续完成充值 而不是直接返回系统繁忙的提示 这样体验不是很好
+                  task操作完后可以继续完成充值 而不是直接返回系统繁忙的提示 这样体验不是很好 系统容错差
                   延迟一定的毫秒数,最多延迟一秒钟  这里使用随机时间可能会好一点,可以防止饥饿进程的出现,即,当同时到达多个进程,
                   只会有一个进程获得锁,其他的都用同样的频率进行尝试,后面有来了一些进程,也以同样的频率申请锁,这将可能导致前面来的锁得不到满足.
                   使用随机的等待时间可以一定程度上保证公平性
                  */
-                return retryGetLock(jedis, lockKey);
+                lockSign = retryGetLock(jedis, lockKey);
             } else {
+                //全局不允许或者不使用重试模式都走此种锁模式
                 //不提供重试 适用于秒杀抢夺一件产品的场景 直接返回秒杀失败即可
-                return tryGetLock(jedis, lockKey);
+                lockSign = tryGetLock(jedis, lockKey);
             }
         } catch (Exception e) {
             logger.error("redis lock  failed, lockKey=" + lockKey, e);
         } finally {
             jedis.close();
         }
-        return false;
+        //只有获得lock的本线程才设置lockSign为true
+
+        if (lockSign) {
+            //本地线程变量需要谨慎使用，大批量使用时尤其注意要 用完调用remove方法释放 否则会引起内存泄漏
+            //参考博客 https://www.jianshu.com/p/33c5579ef44f
+            setThreadLocalLockSign(lockThreadLocal, true);
+        }
+        return lockSign;
+    }
+
+    private void setThreadLocalLockSign(BaseLockSign lockThreadLocal, boolean lockSign) {
+        lockThreadLocal.setLockSign(lockSign);
     }
 
     private boolean retryGetLock(Jedis jedis, String lockKey) throws InterruptedException {
         int timeout = timeoutMsecs;
-        int waitMsecs = new Random().nextInt(100) + 200;//200~300ms
+        int waitMsecs = new Random().nextInt(100) + 100;//100~200ms
         int retryCou = 0;
         while (timeout >= 0) {
             if (tryGetLock(jedis, lockKey)) {
@@ -473,7 +532,7 @@ public class RedisManagerImpl implements RedisManager {
             retryCou++;
         }
         if (retryCou > 0) {
-            logger.info("retryGetLock failed,thread="+Thread.currentThread().getName() + ",retryCou=" + retryCou + ",lockKey=" + lockKey);
+            logger.info("retryGetLock failed,thread=" + Thread.currentThread().getName() + ",retryCou=" + retryCou + ",lockKey=" + lockKey);
         }
         return false;
     }
@@ -504,17 +563,178 @@ public class RedisManagerImpl implements RedisManager {
     }
 
     @Override
-    public void unLock(String key) {
-        del(key);
+    public void unLock(String key, BaseLockSign lockThreadLocal) {
+        //针对余额操作的分布式锁
+        if (threadLocalLockSignTrue(lockThreadLocal)) {
+          /*  try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+            logger.info(Thread.currentThread().getName() + ",lockLocal=" + lockThreadLocal.toString() + " redis unLock acquired,unlockKey=" + key);
+            //使用ThreadLocal就跟加锁完要解锁一样，用完就清理  以免引起内存泄漏
+            del(key);
+        }
+        //必须删除本地线程变量否则会引起内存泄漏
+        //参考博客 https://www.jianshu.com/p/33c5579ef44f
+        lockThreadLocal.clear();
+    }
+
+    private boolean threadLocalLockSignTrue(BaseLockSign lockThreadLocal) {
+        return lockThreadLocal.getLockSign();
+    }
+    @Override
+    public boolean reachRateLimit(String key, String timeSeconds, String limitTimes) {
+
+        Jedis jedis = getJedis();
+        long result = 1;
+        try {
+            String shaStr = jedis.get("ipRateLimitLuaSha");
+            shaStr = StringUtils.isEmpty(shaStr) ?
+                    rateLimitShaStr : shaStr;
+            Object o = jedis.evalsha(shaStr, 1, key, timeSeconds, limitTimes);
+            result = (long) o;
+        } catch (Exception e) {
+            logger.error("redis reachRateLimit script failed, key=" + key);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+        return result == 0;
+    }
+
+    public boolean reachRateLimit(String key, String timeSeconds, String limitTimes,Jedis jedis) {
+        String shaStr = jedis.get("ipRateLimitLuaSha");
+        shaStr = StringUtils.isEmpty(shaStr) ?
+                rateLimitShaStr : shaStr;
+        Object o = jedis.evalsha(shaStr, 1, key, timeSeconds, limitTimes);
+        long result = (long) o;
+        return result == 0;
+    }
+    @Override
+    public boolean ipUaInfoReachLimit(String ua, String ip, String url) {
+        Jedis jedis = getJedis();
+        try {
+            if (simpleIpUaCheckLimit(ip, ua, jedis) || specialUrlCheckLimit(url, ua, ip, jedis)) {
+                return true;
+            }
+        } catch (Exception e) {
+            limitLog.warn("ipUaInfoReachLimit failed", e);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @description 简单校验ip ua信息是否为空和ip是否在白名单
+     * @author CF create on 2018/3/26 15:58
+     */
+    private boolean simpleIpUaCheckLimit(String realIp, String uaInfo, Jedis jedis) {
+        if (StringUtils.isEmpty(realIp) || realIp.length() <= 0 || StringUtils.isEmpty(uaInfo)) {
+            limitLog.warn("!!!###realIp or uaInfo is illegal empty,limit on ");
+            return true;
+        }
+        if (smembers(RATE_LIMIT_BLACK_IP, jedis).contains(realIp)) {
+            limitLog.warn("black ip=" + realIp + ",limit on");
+            return true;
+        }
+        if (smembers(RATE_LIMIT_WHITE_IP, jedis).contains(realIp)) {
+            limitLog.warn("white ip=" + realIp + ",limit off");
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * @description ip url频率校验 四个级别
+     * @author CF create on 2018/1/8 10:27
+     */
+    private boolean specialUrlCheckLimit(String url, String uaInfo, String realIp, Jedis jedis) {
+        limitLog.info("rateLimit url=" + url);
+        Map<String, String> limitCouInfo = hgetAll(COU_LIMIT_INFO, jedis);
+        //一分钟限制
+        String oneMinuteLimit = getRealLimitCou(limitCouInfo.get(COU_LIMIT_INFO_MIN), ONE_MINUTE_LIMIT_COU);
+        if (reachLimit(url, UA_MINUTE, uaInfo, realIp, IP_MINUTE, ONE_MINUTE, oneMinuteLimit, jedis)) {
+            return true;
+        }
+        //一小时限制
+        String hourLimit = getRealLimitCou(limitCouInfo.get(COU_LIMIT_INFO_HOUR), ONE_HOUR_LIMIT_COU);
+        if (reachLimit(url, UA_HOUR, uaInfo, realIp, IP_HOUR, ONE_HOUR, hourLimit, jedis)) {
+            return true;
+        }
+        //一天的访问限制
+        String dayLimitCou = getRealLimitCou(limitCouInfo.get(COU_LIMIT_INFO_DAY), ONE_DAY_LIMIT_COU);
+        if (reachLimit(url, UA_DAY, uaInfo, realIp, IP_DAY, ONE_DAY, dayLimitCou, jedis)) {
+            return true;
+        }
+        //一个月的访问限制
+        String monthLimitCou = getRealLimitCou(limitCouInfo.get(COU_LIMIT_INFO_MONTH), ONE_MONTH_LIMIT_COU);
+        return reachLimit(url, UA_MONTH, uaInfo, realIp, IP_MONTH, ONE_MONTH, monthLimitCou, jedis);
+    }
+
+    /**
+     * @description 获取对应key的频率限制
+     * @author CF create on 2018/1/8 10:27
+     */
+    private String getRealLimitCou(String value, String defaultCou) {
+        return StringUtils.isEmpty(value) ? defaultCou : value;
+    }
+
+    private String getUAKey(String url, String baseKey, String str2) {
+        return UA + url + "-" + baseKey + str2;
+    }
+
+    private String getIPKey(String url, String baseKey, String str2) {
+        return IP + url + "-" + baseKey + str2;
+    }
+
+    //UA信息只和系统版本浏览器型号 a手机型号相关很容易一样所以同时校验两个信息都满足才阻止访问
+    private boolean reachLimit(String url, String uaLimitType, String uaInfo,
+                               String realIp, String ipLimitType,
+                               String time, String limitCou, Jedis jedis) {
+        boolean ipFlag = reachIpLimit(url, realIp, ipLimitType, time, limitCou, jedis);
+        boolean uaFlag = reachUALimit(url, uaLimitType, uaInfo, time, limitCou, jedis);
+        return ipFlag && uaFlag;
+    }
+
+    private boolean reachUALimit(String url, String uaType, String uaInfo,
+                                 String time, String limitCou, Jedis jedis) {
+        //同一设备短时间内访问次数过多进行限制
+        if (reachRateLimit(getUAKey(url, String.valueOf(hash(uaInfo)), uaType), time, limitCou, jedis)) {
+            limitLog.warn("!!!#####url=" + url + ", uaInfo:" + uaInfo + ",时间=" + time + "s内访问次数超限,limitTimes=" + limitCou);
+            limitLog.warn("!!!#####uaInfo hash=" + String.valueOf(hash(uaInfo)));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean reachIpLimit(String url, String realIp, String ipType,
+                                 String time, String limitCou, Jedis jedis) {
+        //访问次数到达上限 暂时封锁ip访问次数
+        if (reachRateLimit(getIPKey(url, realIp, ipType), time, limitCou, jedis)) {
+            limitLog.warn("!!!#####url=" + url + ", ip:" + realIp + ",时间=" + time + "s内访问次数超限,limitTimes=" + limitCou);
+            return true;
+        }
+        return false;
+    }
+
+    private int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
 
 
-   static class CCTestPubSub extends JedisPubSub{
+    static class CCTestPubSub extends JedisPubSub {
 
         @Override
         public void onMessage(String channel, String message) {
             System.out.println(message);
         }
+
         @Override
         public void onSubscribe(String channel, int subscribedChannels) {
 
@@ -532,8 +752,8 @@ public class RedisManagerImpl implements RedisManager {
         return new ThreadPoolExecutor(8, 8,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(10000),
-                namedThreadFactory,
-                new MyThreadTaskAbortPolicy(logger, type));
+                namedThreadFactory);
+//                new MyThreadTaskAbortPolicy(logger, type));
     }
 
     public static void main(String[] args) {
@@ -542,24 +762,24 @@ public class RedisManagerImpl implements RedisManager {
 //        hsetTest(jedis);
 //        transTest(jedis);
 //        pipeLineTest(jedis);
-          System.out.println(jedis.hget("cc","cc"));
+        System.out.println(jedis.hget("cc", "cc"));
        /* publishTest(jedis);
         subscribeTest(jedis);*/
 
     }
 
     /**
-     * @description  管道测试 将所有命令一次性发出
+     * @description 管道测试 将所有命令一次性发出
      * @author CF create on 2018/3/17 18:55
      */
     private static void pipeLineTest(Jedis jedis) {
-        Pipeline pl=jedis.pipelined();
+        Pipeline pl = jedis.pipelined();
 
         System.out.println(pl.isInMulti());
-        pl.set("pipe-test01","01");
-        pl.set("pipe-test02","02");
-        pl.hset("pipe-test03","03","03");
-        List list=pl.syncAndReturnAll();
+        pl.set("pipe-test01", "01");
+        pl.set("pipe-test02", "02");
+        pl.hset("pipe-test03", "03", "03");
+        List list = pl.syncAndReturnAll();
         System.out.println(list.toString());
     }
 
@@ -570,36 +790,36 @@ public class RedisManagerImpl implements RedisManager {
      * @author CF create on 2018/3/17 18:07
      */
     private static void transTest(Jedis jedis) {
-        while("OK".equals(jedis.watch("tras-cc-test"))){
-            try{
-                Transaction trans=jedis.multi();
-                trans.set("tras-cc-test","lalalla");
+        while ("OK".equals(jedis.watch("tras-cc-test"))) {
+            try {
+                Transaction trans = jedis.multi();
+                trans.set("tras-cc-test", "lalalla");
 
-                trans.set("tras-cc-test","djfsdkjfjk");
+                trans.set("tras-cc-test", "djfsdkjfjk");
                 //只要提交前有任何对此key的更改发生 返回的result就会变为空
                 // 相反则返回对应操作的成功默认值
-                List result=trans.exec();
-                if(CollectionUtils.isEmpty(result)){
+                List result = trans.exec();
+                if (CollectionUtils.isEmpty(result)) {
                     jedis.unwatch();
-                }else {
+                } else {
                     break;
                 }
-            }catch(Exception e){
-               e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
         }
     }
 
     private static void publishTest(Jedis jedis) {
-        jedis.publish("cc-pb-test-01"," pubsub test lalalal");
+        jedis.publish("cc-pb-test-01", " pubsub test lalalal");
         jedis.close();
 
     }
 
     private static void subscribeTest(Jedis jedis) {
-        CCTestPubSub sub=new CCTestPubSub();
-        jedis.subscribe(sub,"cc-pb-test-01");
+        CCTestPubSub sub = new CCTestPubSub();
+        jedis.subscribe(sub, "cc-pb-test-01");
 
     }
 

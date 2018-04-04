@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @AUTHOR CF
- * @DATE Created on 2017/10/20 10:49.
+ * @DATE Created on 2018/3/23 14:29.
  */
-public class RedisLog   extends BaseLog{
+public class RateLimitCheckLog extends BaseLog{
+    private Logger logger = LoggerFactory.getLogger(RateLimitCheckLog.class);
 
-    private Logger logger = LoggerFactory.getLogger(RedisLog.class);
 
     @Override
     public Logger getLogger() {

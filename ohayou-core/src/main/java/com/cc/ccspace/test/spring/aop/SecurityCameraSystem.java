@@ -5,9 +5,11 @@ package com.cc.ccspace.test.spring.aop;
  * @DATE Created on 2018/3/1 15:14.
  */
 public class SecurityCameraSystem {
-
+  private Worker  worker;
+    SecurityCameraSystem(){
+    }
   public void monitor(){
-      System.out.println("监控工作人员行为");
+      System.out.println("监控到人员工作开始");
   }
 
   public void playBack(){

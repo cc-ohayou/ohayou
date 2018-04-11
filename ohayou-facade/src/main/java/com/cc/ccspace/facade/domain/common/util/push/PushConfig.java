@@ -15,4 +15,7 @@ public class PushConfig {
         return params;
     }
 
+    public static void main(String[] args) {
+        System.out.println(System.getenv(CommonConstants.CC_RESOURCES_DIR));
+    }
 }

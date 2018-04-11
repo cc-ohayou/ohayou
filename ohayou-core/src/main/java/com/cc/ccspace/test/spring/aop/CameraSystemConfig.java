@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @AUTHOR CF
+ * @AUTHOR CF 切面的环绕配置
  * @DATE Created on 2018/3/1 16:14.
  */
 @Configuration

@@ -86,7 +86,7 @@ public class SecurityLogic {
 /*		System.out.println(JSON.toJSONString(
 				decryptToken("/cGMShsAOW+XHj//9VaNJEZjRnpeUgpHHW1u3E9po2rO1zy" +
 						"SfR3mZALlEemJRro/0oxwV5qyyrcNphjVfuWfQQ==")));*/
-	System.out.print(encryptToken(821286622543659532L,"67f82d0b52af4fd7a0fe147098ad9bb5"));
+	System.out.print(encryptToken(821286622543659532L,"93096040ac734c8d893d279f83aa0137"));
 
 	}
 }

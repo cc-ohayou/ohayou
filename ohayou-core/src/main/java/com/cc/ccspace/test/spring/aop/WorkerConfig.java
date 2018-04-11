@@ -12,7 +12,7 @@ public class WorkerConfig {
     @Bean
     public Worker  worker(){
         System.out.println("工作者初始化 是nurse");
-        return new Nurse();
+        return new Nurse("lucy");
     }
     @Bean(name = "nurseTask")
     public Task task(){

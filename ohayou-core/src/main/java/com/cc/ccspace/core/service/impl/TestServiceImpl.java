@@ -34,7 +34,7 @@ public class TestServiceImpl  implements TestService {
     private JtaTransactionManager jtaTransactionManager;*/
     @Override
     public String createTableStr(String beanName) {
-        Set<Class<?>> clsSet= ClassLoadUtil.getClassSetOfPackage(ClassLoadConstant.BnnTableDemoPath);
+        Set<Class<?>> clsSet= ClassLoadUtil.getClassSetOfPackage(ClassLoadConstant.BNN_TABLE_DEMO_PATH);
         Class  bnnClass=ClassLoadUtil.getClassByBeanName(clsSet,beanName);
         if(bnnClass==null){
             return "";

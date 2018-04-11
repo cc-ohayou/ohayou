@@ -18,14 +18,14 @@ public class ApiResponse implements Serializable {
     public static ApiResponse error(){
         ApiResponse res= new ApiResponse();
         res.setCode(1);
-        res.setMsg("请求失败");
+        res.setMsg("failed");
         res.setData("");
         return res;
     }
     public static ApiResponse success(){
         ApiResponse res= new ApiResponse();
         res.setCode(0);
-        res.setMsg("请求成功");
+        res.setMsg("success");
         res.setData("");
         return res;
     }

@@ -48,7 +48,7 @@ $(function(){
 
 	});
 
-    var backGroundUrl="static/images/a2.png";
+    var backGroundUrl="static/images/bg/zddoubble.png";
     $(document.body).css("backgroundImage","url("+backGroundUrl+")");
     // $(document.body).css("background-color","green");
 

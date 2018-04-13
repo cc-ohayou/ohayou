@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv = "X-UA-Compatible" content = "IE=edge,
-    chrome=1" />
+    <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width,	minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <meta content="yes" name="apple-mobile-web-app-capable">
     <meta content="black" name="apple-mobile-web-app-status-bar-style">
@@ -11,15 +10,47 @@
     <title>linnai space</title>
     <link rel="stylesheet" type="text/css" href="static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" href="static/css/linnai.css">
-    <script src="static/js/jquery-1.9.1.min.js"></script>
-    <script src="static/layui/layui.js" merge="true"></script>
+    <link rel="stylesheet" href="static/bootstrap3/css/bootstrap.min.css">
+    <!--必须在bootstrap之前-->
+    <script src="static/jquery/jquery-3.2.1.min.js"></script>
+
+    <script src="static/bootstrap3/js/bootstrap.min.js"></script>
+    <script src="static/layui/layui.js"></script>
     <script src="static/js/cc/linnai.js"></script>
-    <script src="static/js/cc/base.js"></script>
+    <script src="static/common/base.js"></script>
   <script>
 //     alert("ha ha  i'm from nginx");
   </script>
 </head>
 <body >
+<nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation" style="filter:alpha(Opacity=60);-moz-opacity:0.6;opacity: 0.78;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">CC</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">iOS</a></li>
+                <li><a href="#">SVN</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Java
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">jmeter</a></li>
+                        <li><a href="#">EJB</a></li>
+                        <li><a href="#">Jasper Report</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">分离的链接</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">另一个分离的链接</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <!--<object style="border:1px" type="text/x-scriptlet" data="static/common/test.html" width=100% height=auto></object>-->
 <!--<object style="border:1px" type="text/x-scriptlet" data="static/common/header.html" width=100% height=auto></object>-->
 
@@ -28,18 +59,20 @@
     &lt;!&ndash;<source src="horse.mp3" type="audio/mpeg">&ndash;&gt;
 
 </audio>-->
+<!--
 <div class="main-video">
-    <!--object-fit:fill 填充满父级   controls 控制台-->
-    <!--/static/video/miku.mp4  nginx配置时文件放在nginx处 访问路径变化-->
-<!--<video autoplay preload="auto" src="video/miku.mp4" style="width:100%; height:100%; object-fit: fill" ></video>-->
+    &lt;!&ndash;object-fit:fill 填充满父级   controls 控制台&ndash;&gt;
+    &lt;!&ndash;/static/video/miku.mp4  nginx配置时文件放在nginx处 访问路径变化&ndash;&gt;
+<video autoplay preload="auto" src="video/miku.mp4" style="width:100%; height:100%; object-fit: fill" ></video>
 
 </div>
+-->
 
 
 
 <div id="main-board">
 <div id="createTable">
-    <span style="font-size:25px;font-weight: 500;bottom: 10px;position: relative;">
+    <span style="font-size:25px;font-weight: 500;bottom: 10px;position: relative;color: #ffffff">
         please input your table name(example:BnnDemo) </span><br>
     <input type="text" id="tableName" style="height:30px;margin-left:0px;" placeholder="请输入表名">
     <button class="layui-btn layui-btn-warm" id="but">create</button>
@@ -48,11 +81,12 @@
 </div>
 
 <div id="ccCodePic">
-    <span id="text01" style="font-size: 20px;">
+    <span id="text01" style="font-size: 20px;color: #ffffff">
         you can Scan the QR Code to get source code ,
                         if you're interested in it.</span><br>
     <a href="static/img_upload/index.html"><input type="image" src="static/images/ccCode.png" style="height: 200px;width:200px;margin-top:20px;"/></a>
     <a href="static/file/uploadFile.html" id="redirect_test" ><input type="image" src="static/images/cc-linai.png" style="height: 200px;width:200px;margin-top:20px;"/></a>
+    <a href="static/test/clockTest.html" id="clock-test" ><input type="image" src="static/images/qrCode/1523501930.png" style="height: 200px;width:200px;margin-top:20px;"/></a>
 </div>
 </div>
 

@@ -1,5 +1,5 @@
 body {
-    width: 35rem;
+    /*width: 35rem;*/
     margin: 0 auto;
     /*text-align:center;*/
     /*font-family: Tahoma, Verdana, Arial, sans-serif;*/
@@ -12,8 +12,8 @@ body {
     background-position:top;/*设置图片居中*/
     background-repeat:no-repeat;
     /*color:#000000;*/
-    /*padding-top:30px;*/
-    height:auto;
+    padding: 50px 50px 50px 50px;
+    height:3000px;
     font-size:medium;
     /*背景透明度 0.0为完全透明 文字看不见 背景完全突出 opacity即可 前面的是为了兼容一些个别的浏览器*/
     filter:alpha(Opacity=60);-moz-opacity:0.6;opacity: 0.98;
@@ -25,10 +25,10 @@ body {
 #createTable{
     width:auto;
     height:auto;
-    position:absolute;
+    position:relative;
     left:50%;
-    top:30%;
-    margin:-100px 0 0 -150px;
+    /*top:30%;*/
+    margin:200px 0 0 -150px;
     text-align:left;
     z-index: 2000;
     /*border:1px #CCC solid;*/
@@ -51,13 +51,13 @@ body {
 #ccCodePic{
     width:auto;
     height:auto;
-    position:absolute;
+    position:relative;
     left:50%;
-    top:45%;
-    margin:-100px 0 0 -150px;
+    /*top:45%;*/
+    margin:300px 0 0 -150px;
     text-align:left;
     z-index: 2000;
-    /*border:1px #CCC solid;*/
+    border:1px #CCC solid;
 }
 .article{
     width:auto;

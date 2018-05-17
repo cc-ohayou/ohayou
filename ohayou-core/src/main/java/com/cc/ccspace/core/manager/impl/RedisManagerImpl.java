@@ -614,14 +614,16 @@ public class RedisManagerImpl extends RedisConstants implements RedisManager {
     }
     @Override
     public boolean ipUaInfoReachLimit(String ua, String ip, String url) {
-        Jedis jedis = getJedis();
+        Jedis jedis=getJedis();
         try {
-            if (simpleIpUaCheckLimit(ip, ua, jedis) || specialUrlCheckLimit(url, ua, ip, jedis)) {
-                return true;
+            if (smembers(RATE_LIMIT_WHITE_IP, jedis).contains(ip)) {
+                limitLog.warn("white ip=" + ip + ",limit off");
+                return false;
             }
-        } catch (Exception e) {
-            limitLog.warn("ipUaInfoReachLimit failed", e);
-        } finally {
+            return simpleIpUaCheckLimit(ip, ua, jedis) || specialUrlCheckLimit(url, ua, ip, jedis);
+        }catch (Exception e){
+            limitLog.warn("ipUaInfoReachLimit failed",e);
+        }finally{
             if (jedis != null) {
                 jedis.close();
             }
@@ -641,10 +643,6 @@ public class RedisManagerImpl extends RedisConstants implements RedisManager {
         if (smembers(RATE_LIMIT_BLACK_IP, jedis).contains(realIp)) {
             limitLog.warn("black ip=" + realIp + ",limit on");
             return true;
-        }
-        if (smembers(RATE_LIMIT_WHITE_IP, jedis).contains(realIp)) {
-            limitLog.warn("white ip=" + realIp + ",limit off");
-            return false;
         }
         return false;
     }

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * @AUTHOR CF
@@ -65,5 +66,26 @@ public class FileUploadUtil {
         os.close();
         is.close();
         logger.info("upload success：savePath=" + savePath +File.separator + newFileName);
+    }
+    private static Pattern JS_Pattern=Pattern.compile("<script[\\s\\S]*?>[\\s\\S]*?<\\/script>", Pattern.CASE_INSENSITIVE);
+    private static Pattern JS_Pattern2=Pattern.compile("<[^><]*script[^><]*> ", Pattern.CASE_INSENSITIVE);
+    public static void main(String[] args) {
+        filterJSCode("dgdfgdfg<script>alert(\\\"123\\\")erdyryre</script>");
+        String str=" select count(d.strategy_id) strategyCount FROM `dm$trade_strategy` d where 1=1  and d.dm_uid =? "
+                +" and exists (                                                                                                                         "
+                +" SELECT 1                                                                                                                             "
+                +" FROM `dm$trade_strategy_settle` dtss ,dm$trade t                                                                                  "
+                +" where d.strategy_id = t.strategy_id                                                                                                  "
+                +" and dtss.trade_id = t.trade_id																																"
+                +" and t.type =2                                                                                                                        "
+                +" )"     ;
+        System.out.println(str);
+    }
+
+    private static void filterJSCode(String content) {
+        content = JS_Pattern.matcher(content).replaceAll("");
+        System.out.println(content);
+        content = JS_Pattern2.matcher(content).replaceAll("");
+        System.out.println(content);
     }
 }

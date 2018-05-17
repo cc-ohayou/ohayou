@@ -86,7 +86,23 @@ public class SecurityLogic {
 /*		System.out.println(JSON.toJSONString(
 				decryptToken("/cGMShsAOW+XHj//9VaNJEZjRnpeUgpHHW1u3E9po2rO1zy" +
 						"SfR3mZALlEemJRro/0oxwV5qyyrcNphjVfuWfQQ==")));*/
-	System.out.print(encryptToken(821286622543659532L,"081fcd64ceff401e9ba7283021282047"));
+	System.out.println(encryptToken(821286622543659532L,"932c5c385e244e25af0c454b9aa18ab8"));
+        System.out.println(System.currentTimeMillis()+120000);
+        String str=" select t.*,dts.average_price       "
+            +" from dm$trade_strategy t,              "
+            +" dm$trade_settle dts,                   "
+            +" `securities$stock` srt      "
+            +" where t.status = 2                     "
+            +" and srt.stock_code=t.stock_code       "
+            +" and srt.opened=1                   "
+            +" and DATEDIFF(now(),t.arrive_date)>=0   "
+            +" and dts.strategy_id = t.strategy_id    "
+            +" and dts.type = 1                       "
+            +" and t.auto_defer=1                     "
+            +" and t.experience=-1                    "
+            +" and t.buy_out !=1 					  "
+            +" order by t.dm_uid                      ";
+        System.out.print(str);
 
 	}
 }

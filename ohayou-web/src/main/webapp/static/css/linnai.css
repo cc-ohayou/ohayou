@@ -8,8 +8,8 @@ body {
     */
     z-index: 1000;
     background-attachment:fixed;/*设置背景图片填充  固定不会滚动fixed  scroll可滚动*/
-    background-size: 100%;
-    background-position:top;/*设置图片居中*/
+    background-size: cover;/*自动放大缩小图片来自适应布局*/
+    background-position:center;/*设置图片居中*/
     background-repeat:no-repeat;
     /*color:#000000;*/
     padding: 50px 50px 50px 50px;

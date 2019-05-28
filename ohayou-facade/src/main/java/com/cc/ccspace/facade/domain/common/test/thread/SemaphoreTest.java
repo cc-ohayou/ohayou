@@ -26,6 +26,7 @@ public class SemaphoreTest {
                         Thread.sleep((long) (Math.random() * 10000));
                         // 访问完后，释放 ，如果屏蔽下面的语句，则在控制台只能打印5条记录，之后线程一直阻塞
                         semp.release();
+                        System.out.println("release: " + NO);
                     } catch (InterruptedException e) {
                     }
                 };

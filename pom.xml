@@ -383,6 +383,14 @@
                 <artifactId>activemq-broker</artifactId>
                 <version>5.14.5</version>
             </dependency>
+
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
@@ -410,6 +418,7 @@
         <spring.version>4.3.7.RELEASE</spring.version>
         <shiro.version>1.2.3</shiro.version>
         <tk.mybatis.version>3.4.3</tk.mybatis.version>
+        <netty.version>4.1.31.Final</netty.version>
 
 
     </properties>

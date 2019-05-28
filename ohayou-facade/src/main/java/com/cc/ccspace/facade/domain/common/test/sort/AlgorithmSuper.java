@@ -47,7 +47,8 @@ quick costTime:1965.0数组大小100000,运行次数：100
  */
 public abstract class AlgorithmSuper {
 
-    public static int count0;
+    public static int exchCou;
+    public static int cmpCou;
     public abstract boolean showFlag();
     public abstract void sort(Comparable [] a);
     public  void sortT(Comparable[] a){
@@ -55,11 +56,14 @@ public abstract class AlgorithmSuper {
         timer.start();
         this.sort(a);
         timer.stop();
-        System.out.println("cost time mills:"+timer.getTotalTimeMillis());
-        if(showFlag()==true) {
+        System.out.println("cost time mills:"+timer.getTotalTimeMillis()+",exchCou="+exchCou+",cmpCou="+cmpCou);
+        if(showFlag()) {
             System.out.println(isSorted(a));
             show(a);
         }
+        cmpCou=0;
+        exchCou=0;
+
     }
 
     public static double time(String algName,Comparable[] a){
@@ -109,9 +113,7 @@ public abstract class AlgorithmSuper {
            // System.out.println();
         }*/
 
-
-       // bubbleSort(a);
-       // quickSort(b,1,8);
+         // quickSort(b,1,8);
 //        selectSort(b);
 //        shellSort(b);
 
@@ -120,6 +122,7 @@ public abstract class AlgorithmSuper {
 //        System.out.println(b.toString());
 //        show(b);
 
+        String alg0="bubble";
         String alg1="shell";
         String alg2="insert";
         String alg3="select";
@@ -253,7 +256,7 @@ for(int i=0;i<a.length;i++){//每一轮都要找出所有元素中最小的一�
     }
     exch(a,i,min);
 }
-//    System.out.println("exch count:"+count0);
+//    System.out.println("exch count:"+exchCou);
 
 
 }
@@ -264,7 +267,7 @@ for(int i=0;i<a.length;i++){//每一轮都要找出所有元素中最小的一�
 	 * @param
 	 */
 protected static void exch(Comparable[] a, int i, int j){
-//     count0++;
+     exchCou++;
     Comparable temp=a[i];//要求被比较对象是一定要实现Comparable接口的 譬如Integer String Long这些是都实现该接口的
     a[i]=a[j];
     a[j]=temp;
@@ -279,7 +282,8 @@ protected static void exch(Comparable[] a, int i, int j){
 public static boolean less(Comparable v,Comparable w){
     String a="12"; //String的compareTo方法稍微特殊点
 //    Integer b=4;//Integer的compareTo和compare方法意义是一样的
-    return v.compareTo(w)<=0;//一般来讲compareTo方法返回小于0的数标示前者小于后者成立
+    cmpCou++;
+    return v.compareTo(w)>0;//一般来讲compareTo方法返回小于0的数标示前者小于后者成立
     //当然这个要看你比较的对象的compareTo方法是否是正常规则
     // 譬如Integer 和String Double等  可以参考源码
 
@@ -347,10 +351,16 @@ public  static void show(Comparable[] a){
         //直到第n-1个元素交换1次  总的比较交换次数是 1+2+3+..+n-1 总的比较交换次数是n2/2
         //如果是最好的情况 每次都不用交换 交换次数0 循环次数仍是n-1 比较次数n
         for (int i = 1; i < a.length; i++) {
+            boolean didSwap=false;
             for (int j = 0; j < a.length - i; j++) {
                 if (less(a[j+1],a[j])) {
                     exch(a, j, j + 1);
+                    didSwap=true;
                 }
+                if(didSwap){
+                    break;
+                }
+
             }
 
         }

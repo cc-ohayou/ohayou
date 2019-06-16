@@ -22,6 +22,7 @@ public class MergeSort extends AlgorithmSuper{
     public MergeSort(){
 
     }
+    @Override
     public  void sort(Comparable[] a){
         temp=new Comparable[a.length];
         sort(a,0,a.length-1);

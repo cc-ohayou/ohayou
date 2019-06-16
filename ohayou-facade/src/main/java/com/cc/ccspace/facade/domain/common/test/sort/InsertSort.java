@@ -24,6 +24,7 @@ public class InsertSort extends AlgorithmSuper {
     }
     */
 
+    @Override
     public  void sort(Comparable[] a){
         int len=a.length;
         for(int i=1;i<len;i++){

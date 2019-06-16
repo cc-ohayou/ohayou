@@ -38,18 +38,32 @@ public int partition(Comparable[] a ,int lo,int hi)
 //        sort(a,0,a.length-1);
         sort3Way(a,0,a.length-1);
     }
+    /**  * describe: 快速排序 选择一个基准进行排序 效率相较于冒泡是快的多的
+     * 算法思想：以军训排队为例，教官说以第一个同学为中心，
+     * 比他矮的站他左边，比他高的站他右边，这就是一趟快速排序。因此，一趟快速排序是以一个枢轴，
+     * 将序列分成两部分，枢轴的一边比它小（或小于等于），另一边比它大（或大于等于）。
+     * @author CAI.F
+     * @date:  日期:2017/2/28 时间:23:35
+     * @param
+     */
 
     private void sort(Comparable[] a, int lo, int hi) {
-        if(hi<=lo)
+        if(hi<=lo) {
             return;
-        int j=partition(a,lo,hi);//找出切分元素的索引
-        sort(a,lo,j-1);//左半边有序
-        sort(a,j+1,hi);//右半边有序
+        }
+        //找出切分元素的索引
+        int j=partition(a,lo,hi);
+        //左半边有序
+        sort(a,lo,j-1);
+        //右半边有序
+        sort(a,j+1,hi);
 
     }
 
     public void sort3Way(Comparable[] a,int lo,int hi){
-        if(hi<=lo)return;
+        if(hi<=lo) {
+            return;
+        }
         int lt=lo;
         int mid=lo+1;
         int gt=hi;

@@ -15,12 +15,18 @@ public int partition(Comparable[] a ,int lo,int hi)
         Comparable v=a[lo];
         while(true){
             while(less(a[++i],v)){//左边的元素小于切分元素 就继续往下找 直到最后一个
-                if(i==hi)break;
+                if(i==hi){
+                    break;
+                }
             }
             while(less(v,a[--j])){//右边的元素大于切分元素则继续往前找找寻 直到跟i碰头或者到起始元素
-                if(j==lo)break;
+                if(j==lo){
+                    break;
+                }
             }
-            if(i>=j)break;//两者相遇 说明从头到尾的数据都已经比较完了 退出循环
+            if(i>=j){
+                break;//两者相遇 说明从头到尾的数据都已经比较完了 退出循环
+            }
             exch(a,i,j);
         }
         exch(a,lo,j);//交换比较元素和 将符合切分规则的比较元素a[lo]放到a[j]处
@@ -89,7 +95,9 @@ public int partition(Comparable[] a ,int lo,int hi)
 
     public static void main(String[] args) {
         Comparable[] a=generateArray(1000000,"double",10);
+        Comparable[] a2=new Integer[]{1,2,3};
+
         AlgorithmSuper as=new QuickSort();
-        as.sortT(a);
+        as.sortT(a2);
     }
 }

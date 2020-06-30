@@ -13,6 +13,7 @@ Object o1;
         this.o1=o1;
         this.o2=o2;
     }
+    @Override
     public void run(){
 
         synchronized(o1){

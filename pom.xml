@@ -412,7 +412,7 @@
         <jdbc.driver.version>5.1.35</jdbc.driver.version>
         <javax.persistence.version>1.0.2</javax.persistence.version>
         <jackson-databind.version>2.5.2</jackson-databind.version>
-        <mybatis.version>3.3.0</mybatis.version>
+        <mybatis.version>3.5.6</mybatis.version>
         <mybatis-spring.version>1.2.3</mybatis-spring.version>
         <pagehelper.version>3.7.4</pagehelper.version>
         <spring.version>4.3.7.RELEASE</spring.version>

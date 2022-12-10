@@ -415,7 +415,7 @@
         <mybatis.version>3.3.0</mybatis.version>
         <mybatis-spring.version>1.2.3</mybatis-spring.version>
         <pagehelper.version>3.7.4</pagehelper.version>
-        <spring.version>4.3.7.RELEASE</spring.version>
+        <spring.version>6.0.0</spring.version>
         <shiro.version>1.2.3</shiro.version>
         <tk.mybatis.version>3.4.3</tk.mybatis.version>
         <netty.version>4.1.31.Final</netty.version>
